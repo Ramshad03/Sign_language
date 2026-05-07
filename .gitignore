@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Trained model artifacts (regeneratable via train_model.py / word_train.py)
+model/*.pt
+model/*.npz
+model/*.png
+
+# Raw video files (large, source material)
+raw_videos/
+filtered/
