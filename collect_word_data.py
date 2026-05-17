@@ -1,19 +1,4 @@
-# ══════════════════════════════════════════════════════════════
-# collect_word_data.py — Segmenter-driven word data collection
-#
-# Usage:
-#   python collect_word_data.py              → collect all words/letters
-#   python collect_word_data.py hello Z bad  → collect only those three
-#
-# Workflow per word:
-#   1. Word displayed — position your hand.
-#   2. Press SPACE to arm the collector.
-#   3. Sign the word naturally. The segmenter auto-captures.
-#   4. Green border = captured. Repeat until quota reached.
-#   5. Press Q to quit at any point.
-#
-# Output: word_data/<word>/<N>.npy  — shape (T, 302) variable T
-# ══════════════════════════════════════════════════════════════
+
 
 import cv2
 import mediapipe as mp
@@ -35,12 +20,24 @@ CAMERA_INDEX      = 0
 # J and Z are motion letters — trained here as sequences, not
 # in collect_data.py. app.py routes single-char results to
 # add_letter() automatically so they appear correctly in text.
-ALL_GESTURES = [
-    "J", "Z", "P", "Q", "eat", "where", "wants","sleep", "food", "goodbye",
-    "home","how",     # motion/ambiguous letters — routed to add_letter() automatically
-    "hello", "thanks", "yes", "no", "please",
-    "help",  "more",   "stop", "good", "bad",
-    "sorry", "water",           # ← add new words here
+ALL_GESTURES = [ 
+    "breakfast","back",
+    "day","do_it_yourself",
+    "eat",
+    "Funny",
+    "good", "goodbye","give",
+    "ha_ha","home","how","hello", "help",
+     "J",
+    "more",
+    "no",
+    "Q", "question_mark",
+    "P","please",
+    "sleep", "stop","sorry", "school",
+    "thanks","today",
+    "where", "want", "weather","what", "water", 
+    "yes", "you","your",
+    "Z",
+    
 ]
 
 # ── Parse args:  [--clear] [WORD ...]  ───────────────────────
@@ -117,8 +114,8 @@ def _draw_hud(frame, word, collected, total, seg: GestureSegmenter, armed: bool)
 
 
 # ── Wait screen ───────────────────────────────────────────────
-def _wait_for_space(cap, hands, word) -> bool:
-    """Returns True when SPACE is pressed, False when Q is pressed."""
+def _wait_for_space(cap, hands, word) -> str:
+    """Returns 'start', 'skip', or 'quit'."""
     mp_draw  = mp.solutions.drawing_utils
     mp_style = mp.solutions.drawing_styles
     mp_hands = mp.solutions.hands
@@ -146,16 +143,18 @@ def _wait_for_space(cap, hands, word) -> bool:
         cv2.rectangle(frame, (0, 0), (w, 70), (15, 15, 50), -1)
         cv2.putText(frame, f"Next word: '{word}'", (14, 42),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.1, (100, 220, 255), 2)
-        cv2.putText(frame, "SPACE = start collection   Q = quit",
+        cv2.putText(frame, "SPACE = start   S = skip   Q = quit",
                     (14, h - 14), cv2.FONT_HERSHEY_SIMPLEX, 0.6,
                     (180, 180, 180), 1)
         cv2.imshow("Word Collection v2", frame)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord(" "):
-            return True
+            return "start"
+        if key == ord("s"):
+            return "skip"
         if key == ord("q"):
-            return False
+            return "quit"
 
 
 # ── Main collection loop ──────────────────────────────────────
@@ -191,9 +190,12 @@ def collect() -> None:
             print(f"  Adding   : {SAMPLES_PER_WORD} more  →  total {target}")
             print(f"{'─' * 52}")
 
-            ready = _wait_for_space(cap, hands, word)
-            if not ready:
+            action = _wait_for_space(cap, hands, word)
+            if action == "quit":
                 break
+            if action == "skip":
+                print(f"  ⏭  Skipped '{word}'")
+                continue
 
             # ── Per-word collection loop ───────────────────
             segmenter  = GestureSegmenter()

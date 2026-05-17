@@ -299,3 +299,14 @@ ALL_GESTURES = [
 
 python collect_word_data.py NEW_LETTER
 python word_dataset_builder.py; python word_train.py
+
+
+
+# to add to git
+
+git remote add origin https://github.com/YOUR_USERNAME/Sign_lang.git
+git push -u origin master
+
+
+
+ .\venv\Scripts\Activate.ps1     

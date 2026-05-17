@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Trained model artifacts (regeneratable via train_model.py / word_train.py)
+# Trained model artifacts (regeneratable via training scripts)
 model/*.pt
 model/*.npz
 model/*.png
@@ -11,3 +11,8 @@ model/*.png
 # Raw video files (large, source material)
 raw_videos/
 filtered/
+
+# Training data — binary numpy files, regeneratable
+data/
+word_data/
+

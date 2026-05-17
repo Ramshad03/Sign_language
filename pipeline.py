@@ -1,25 +1,3 @@
-# ══════════════════════════════════════════════════════════════
-# pipeline.py — Non-blocking real-time inference pipeline
-#
-# Two helper threads decouple slow operations from the display loop:
-#
-#   CaptureThread   — dedicated camera read loop; always has the
-#                     latest frame without blocking inference.
-#
-#   InferenceThread — consumes complete gesture segments from an
-#                     input queue, runs the (potentially slow)
-#                     sequence model, and puts results on an
-#                     output queue — all without blocking the
-#                     main display thread.
-#
-# The main loop therefore only does:
-#   1. get_latest() — grab newest frame (non-blocking)
-#   2. MediaPipe + feature extraction (fast, ~5-10 ms)
-#   3. Segmenter update (µs)
-#   4. Letter-model inference if STABLE (fast MLP, ~0.5 ms)
-#   5. Poll output queue for async word results
-#   6. Render HUD + cv2.imshow
-# ══════════════════════════════════════════════════════════════
 
 from __future__ import annotations
 import threading

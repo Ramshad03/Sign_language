@@ -21,7 +21,7 @@ FRAME_SKIP        = 5        # capture 1 sample every N frames (adds variety)
 CAMERA_INDEX      = 0        # 0 = default webcam
 
 ALL_GESTURES = (
-    list('ABCDEFHIKLMNORSTUVWXY') +  # J, Z, P, Q excluded — handled as motion/word sequences
+    list('ABCDEFHIKLMNORSTUVWXY') +['I_Love_You']+['BAD'] +  # J, Z, P, Q excluded — handled as motion/word sequences
     ['SPACE', 'DEL', 'NOTHING']
 )
 
@@ -31,18 +31,12 @@ CLEAR  = "--clear" in _args
 _args  = [a for a in _args if a != "--clear"]
 
 if _args:
-    # Case-insensitive match against ALL_GESTURES; accept new ones too
-    GESTURES = []
-    for arg in _args:
-        match = next((g for g in ALL_GESTURES if g.upper() == arg.upper()), None)
-        if match:
-            GESTURES.append(match)
-        else:
-            # New gesture not yet in ALL_GESTURES — add it and collect
-            print(f"  New gesture '{arg}' added to vocabulary")
-            ALL_GESTURES.append(arg)
-            GESTURES.append(arg)
-    print(f"  Collecting: {GESTURES}")
+    requested = [a.upper() for a in _args]
+    invalid   = [r for r in requested if r not in ALL_GESTURES]
+    if invalid:
+        print(f"  ⚠️  Unknown gestures ignored: {invalid}")
+    GESTURES = [g for g in ALL_GESTURES if g in requested]
+    print(f"  Collecting selected: {GESTURES}")
 else:
     GESTURES = ALL_GESTURES
 

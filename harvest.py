@@ -1,25 +1,3 @@
-# ==============================================================
-# harvest.py — One-shot harvesting launcher
-#
-# Scans raw_videos/ and runs the correct pipeline for each folder:
-#   • Single-char folders (A, B, C...) → harvest_letters.py → data/
-#   • Word folders (hello, thanks...) → harvest_filter + extract → word_data/
-#
-# Usage:
-#   python harvest.py              → process everything in raw_videos/
-#   python harvest.py hello A bad  → process only those folders
-#
-# raw_videos/ folder structure:
-#   raw_videos/
-#     A/          ← letter: put .mp4 files here
-#     B/
-#     hello/      ← word: put .mp4 files here
-#     thanks/
-#
-# After harvesting, run the training pipeline:
-#   Letters:  python build_dataset.py → preprocess.py → train_model.py → evaluate_model.py
-#   Words:    python word_dataset_builder.py → word_train.py
-# ==============================================================
 
 import os
 import sys
